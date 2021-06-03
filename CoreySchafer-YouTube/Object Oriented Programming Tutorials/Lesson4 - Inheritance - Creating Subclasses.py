@@ -102,4 +102,4 @@ print(issubclass(Developer, Employee))   # checks if Developer is a subclass of 
 print(issubclass(Manager, Developer))   # checks if Manager is a subclass of Developer → False
 
 
-# exceptions.py from the WSGY library is good code to reference for examples of class inheritance
+# exceptions.py from the WSGI library is good code to reference for examples of class inheritance
