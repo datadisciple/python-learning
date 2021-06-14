@@ -6,6 +6,10 @@
 # It is known that all integers greater than 28123 can be written as the sum of two abundant numbers
 # Find the sum of all the positive integers which cannot be written as the sum of two abundant numbers
 
+import time
+
+start_time = time.time()
+
 abundant_nums = []
 pos_nums = []
 limit = 28123
@@ -19,67 +23,26 @@ for num in range(1, limit+1):
             sum_div += j
             divisors.append(j)
 
-    # if abundant record in dict as True, and enter num into abundant_num list
+    # if sum of divisors is greater than the number, add to abundant numbers list
     if sum_div > num:
-        abundant_nums.append(num)
-        # print(num)
-        # print(divisors)
-        # print(sum_div)
-        # print('\n')
-        
+        abundant_nums.append(num)        
 
-    if(num % 2 == 0):
-        pos_nums.append(num)
+    # create list of all positive numbers
+    pos_nums.append(num)
 
-# print(abundant_nums)
-# print(pos_nums)
-# print('\n')
+r_ind =0
 
-"""for a in abundant_nums:
-    for b in abundant_nums:
-        if (a+b) in pos_nums:
-            finder = pos_nums.index(a+b)
-            pos_nums[finder] = 0
-        if ((a+b) > limit): break"""
-
+# loops through abundant numbers and removes any values in pos_nums list that are made by adding together
 for a in abundant_nums:
-    if (2*a in pos_nums):
-        pos_nums.remove(2*a)
+    for b in abundant_nums:
+        if(a+b) in pos_nums:
+            pos_nums.remove(a+b)
+            r_ind += 1
+            print(f'removed {str(r_ind)}')  # this is just a sanity print to ensure code is still doing something since it takes forever to run
+        elif(a+b)>limit: break
 
-final_pos_nums = pos_nums
-
-for value in pos_nums:
-    for a in abundant_nums:
-        if(value not in final_pos_nums): break
-
-        for b in abundant_nums:
-            if (a+b)==value:
-                final_pos_nums.remove(value)
-                break
-
-
-"""for k, value in enumerate(pos_nums):
-
-    for a in abundant_nums:
-        if (value not in pos_nums): break
-
-        for b in abundant_nums:
-            if ((a+b) == value and value in pos_nums):
-                pos_nums[k]=0
-                break"""
-    
-answer = sum(final_pos_nums)
-# print(pos_nums)
+answer = sum(pos_nums)
 print(answer)
+print("--- %s seconds ---" % (time.time() - start_time))    # current runtime is extremely slow → 841.7 seconds
 
-""" for i in range(1,51):
-    if (i % 2 == 0):
-        pos_nums.append(i)
-        
-        for a in abundant_nums:
-            if (2*a > i): break
-
-            for b in abundant_nums:
-                if ((a+b) == i and i in pos_nums):
-                    pos_nums.remove(i) """
 
