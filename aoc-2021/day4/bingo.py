@@ -50,6 +50,7 @@ def generate_boards(boards_csv):
     
     return boards_dictionary
 
+
 def bingo_check(bingo_board):
     # initializes 2D array to store columns
     board_columns = []
@@ -120,6 +121,48 @@ def play_bingo(dict_of_boards, list_of_nums):
     
     return (winning_cards, winning_number, marked_boards_dict)
 
+
+def play_losing_bingo(dict_of_boards, list_of_nums):
+    cards_without_bingo = [key for key in dict_of_boards.keys()]
+    winning_cards = []
+    is_bingo = False
+
+    marked_boards_dict = dict_of_boards.copy()
+    last_card = False
+
+    for num in list_of_nums:
+        for card in cards_without_bingo[:]:
+            # ^ important that a copy of cards_without_bingo is being used
+            # ensures the index is based off the original copy and not the list getting its items removed
+            player_board = marked_boards_dict[card]
+            for row in player_board:
+                for col, value in enumerate(row):
+                    if value == num:
+                        row[col] = 'X'
+            
+            is_bingo = bingo_check(player_board)
+
+            if is_bingo == True:
+                winning_cards.append(card)
+                winning_number = int(num)
+
+                if len(cards_without_bingo) > 1:
+                    cards_without_bingo.remove(card)
+                else:
+                    last_card = True
+            
+            if last_card == True:
+                break
+
+        if last_card == True:
+            break
+
+    worst_card = cards_without_bingo[0]
+    worst_card_marked = player_board
+
+    return (worst_card, winning_number, worst_card_marked)    
+
+
 def calc_unmarked(winning_cards_list, dict_of_boards, marked_boards_dict):
     for card in winning_cards_list:
         bingo_board = dict_of_boards[card]
@@ -137,6 +180,7 @@ def calc_unmarked(winning_cards_list, dict_of_boards, marked_boards_dict):
         scores_dict[card] = unmarked_sum
     
     return scores_dict
+    
 
 def calc_total_score(unmarked_scores_dict, winning_number):
     total_score_dict = {}
@@ -166,7 +210,21 @@ def main():
     print(f"winning number: {winning_number}")
     for card in total_scores.keys():
         card_score = total_scores[card]
-        print(f"{card} — {card_score}")
+        print(f"{card} → total score: {card_score}")
+    
+    worst_card_stats = play_losing_bingo(bingo_boards, bingo_numbers)
+    worst_card = worst_card_stats[0]
+    wc_winning_number = worst_card_stats[1]
+    wc_marked = worst_card_stats[2]
+
+    wc_unmarked_score = calc_unmarked([worst_card], bingo_boards, {worst_card: wc_marked})
+    wc_total_score = calc_total_score(wc_unmarked_score , wc_winning_number)
+
+    print('\n')
+    print("[--- Play to L O S E ??? ---]")
+    print("> choose the last card to win:")
+    print(f"winning number: {wc_winning_number}")
+    print(f"{worst_card} → total score: {wc_total_score[worst_card]}")
 
 if __name__ == "__main__":
     main()
